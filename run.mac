@@ -1,0 +1,57 @@
+# example driver macro
+
+# beam energy in keV
+/control/alias beamEnergy 1300
+# beam particle (gamma, mu-, e-, etc)
+/control/alias bParticle gamma
+
+# number of events to generate
+/control/alias ngen 10000
+
+# random seeds
+/control/alias seed1 123
+/control/alias seed2 456
+/random/setSeeds {seed1} {seed2}
+
+/control/verbose 2
+/run/verbose 2
+
+# i don't htink these are used anymore....
+/testem/det/setMat Silicon
+/testem/det/setSize {siDepth} um
+/testem/det/setDepth {siDepth} um
+
+/run/initialize
+#
+#/control/execute vis.mac
+#/vis/scene/endOfEventAction accumulate -1
+#
+/testem/gun/setDefault 
+/gun/particle {bParticle}
+/gun/energy {beamEnergy} keV
+
+
+# set this to 1 if you want the beam
+# angle to be randomly distributed
+/testem/gun/rndm 0
+
+
+# how often to print progress
+/run/printProgress 100000
+
+# i don't think these are used anymore
+/analysis/h1/set 1 100 0   {siDepth} um        #track length of primary
+/analysis/h1/set 2 100 0  100 none      #nb steps of primary
+/analysis/h1/set 3 200 0   {siDepth} um        #step size of primary
+/analysis/h1/set 4 1000 0  {beamEnergy} keV      #total energy deposit
+/analysis/h1/set 5 1000 0   {beamEnergy} keV      #sec. chared energy spectrum
+/analysis/h1/set 6 1000 0   {beamEnergy} keV      #sec. neutral energy spectrum
+/analysis/h1/set 7 1000 0   {beamEnergy} keV      #sec. positive energy spectrum
+/analysis/h1/set 8 1000 0   {beamEnergy} keV      #sec. negative energy spectrum
+/analysis/h1/setAscii 1 
+
+# base output filename
+/analysis/setFileName events_{beamEnergy}
+
+# run the specified number of events
+/run/beamOn {ngen}
