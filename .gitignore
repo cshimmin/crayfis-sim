@@ -1,0 +1,4 @@
+# ignore data files
+*.root
+# ignore batch output files
+slurm*.out
