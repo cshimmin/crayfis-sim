@@ -17,6 +17,7 @@
 /run/verbose 2
 
 # i don't htink these are used anymore....
+/control/alias siDepth 50
 /testem/det/setMat Silicon
 /testem/det/setSize {siDepth} um
 /testem/det/setDepth {siDepth} um
