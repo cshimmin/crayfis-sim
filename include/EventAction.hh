@@ -40,13 +40,14 @@
 
 #include <set>
 
+// Maximum number of pixels to allocate memory for.
+// Ideally we could just receive this information from
+// the config file and dynamically allocate,
+// but it's a big pain in the ass to get the
+// DetectorConstruction to communicate with this object :(
 #define MAX_PIX 1000
-// smallest energy deposit required to write out a pixel
-#define MIN_PIX_ENERGY 5*3.6e-3
-// smallest pixel required to write out an event
-#define THRESHOLD_ENERGY 10*3.6e-3
-// smallest number of pixels above threshold to write out an event
-#define MIN_NPIX 1
+
+class EventMessenger;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -63,6 +64,10 @@ class EventAction : public G4UserEventAction
     void AddEdep(G4double Edep)    {fTotalEnergyDeposit += Edep;};      
     G4double GetEnergyDeposit()    {return fTotalEnergyDeposit;};    
     void AddPixHit(G4double Edep, int x, int y);
+
+    void SetMinPixOut(G4double newval) { fMinPixOut = newval; };
+    void SetMinPixEvent(G4double newval) { fMinPixEvent = newval; };
+    void SetNPixEvent(G4int newval) { fNPixEvent = newval; };
     
   private:
     G4double fTotalEnergyDeposit;   
@@ -71,6 +76,12 @@ class EventAction : public G4UserEventAction
     bool fHasHit;
 
     std::set<std::pair<int, int> > fPixAboveThreshold;
+
+    G4double fMinPixOut;
+    G4double fMinPixEvent;
+    G4int    fNPixEvent;
+
+    EventMessenger* fEventMessenger;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

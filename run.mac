@@ -8,48 +8,52 @@
 # number of events to generate
 /control/alias ngen 10000
 
+# control the geometry/number of pixels
+/control/alias pixDepth 700
+/control/alias pixWidth 1.5
+/control/alias npix 500
+
+
+# set the minimum pixel energy to write out
+/testem/evt/setMinPixOut 3.6 eV
+# set the minimum pixel energy required to keep event
+/testem/evt/setMinPixEvent 36 eV
+# set the number of pixels above MinPixEvent threshold to require
+/testem/evt/setNPixEvent 1
+
+
 # random seeds
 /control/alias seed1 123
 /control/alias seed2 456
 /random/setSeeds {seed1} {seed2}
 
+# set this to 1 if you want the beam
+# angle to be randomly distributed
+/control/alias doRandom 0
+
+
+
 /control/verbose 2
 /run/verbose 2
 
-# i don't htink these are used anymore....
-/control/alias siDepth 50
 /testem/det/setMat Silicon
-/testem/det/setSize {siDepth} um
-/testem/det/setDepth {siDepth} um
+/testem/det/setPixWidth {pixWidth} um
+/testem/det/setDepth {pixDepth} um
+/testem/det/setNPix {npix}
+
 
 /run/initialize
-#
-#/control/execute vis.mac
-#/vis/scene/endOfEventAction accumulate -1
-#
+
+
 /testem/gun/setDefault 
 /gun/particle {bParticle}
 /gun/energy {beamEnergy} keV
+/testem/gun/rndm {doRandom}
 
-
-# set this to 1 if you want the beam
-# angle to be randomly distributed
-/testem/gun/rndm 0
 
 
 # how often to print progress
-/run/printProgress 100000
-
-# i don't think these are used anymore
-/analysis/h1/set 1 100 0   {siDepth} um        #track length of primary
-/analysis/h1/set 2 100 0  100 none      #nb steps of primary
-/analysis/h1/set 3 200 0   {siDepth} um        #step size of primary
-/analysis/h1/set 4 1000 0  {beamEnergy} keV      #total energy deposit
-/analysis/h1/set 5 1000 0   {beamEnergy} keV      #sec. chared energy spectrum
-/analysis/h1/set 6 1000 0   {beamEnergy} keV      #sec. neutral energy spectrum
-/analysis/h1/set 7 1000 0   {beamEnergy} keV      #sec. positive energy spectrum
-/analysis/h1/set 8 1000 0   {beamEnergy} keV      #sec. negative energy spectrum
-/analysis/h1/setAscii 1 
+/run/printProgress 50000
 
 # base output filename
 /analysis/setFileName events_{beamEnergy}

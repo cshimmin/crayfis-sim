@@ -121,7 +121,6 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 
   if( command == fNPixCmd )
    { fDetector->SetNPix(fNPixCmd->GetNewIntValue(newValue));}
-   
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

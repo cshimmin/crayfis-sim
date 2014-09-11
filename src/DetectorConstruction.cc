@@ -60,7 +60,6 @@ DetectorConstruction::DetectorConstruction()
 :G4VUserDetectorConstruction(),fPBox(0), fLBox(0), fMaterial(0)
 {
   fBoxSize = 1*cm;
-  fBoxDepth = 50*um;
   fPixWidth = 1.5*um;
   fPixDepth = 700*um;
   fNpix = 1000;
@@ -213,27 +212,7 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
 		  pixBoxP->idx_y = jpix;
 	  }
   }
-
-  /*G4Box* pixRow = new G4Box("PixelRow", 100*1.5*um, 1.5*um, 700*um);*/
-
-  /*
-  G4Box*
-  sBox = new G4Box("Container",                         //its name
-                   fBoxDepth/2,fBoxSize/2,fBoxSize/2);   //its dimensions
-
-  fLBox = new G4LogicalVolume(sBox,                     //its shape
-                             fMaterial,                 //its material
-                             fMaterial->GetName());     //its name
-
-  fPBox = new G4PVPlacement(0,                          //no rotation
-                           G4ThreeVector(),             //at (0,0,0)
-                           fLBox,                       //its logical volume
-                           fMaterial->GetName(),        //its name
-                           0,                           //its mother  volume
-                           false,                       //no boolean operation
-                           0);                          //copy number
-  */
-                           
+                          
   PrintParameters();
   
   //always return the root volume
@@ -245,8 +224,9 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
 
 void DetectorConstruction::PrintParameters()
 {
-  G4cout << "\n The Box is " << G4BestUnit(fBoxSize,"Length")
-         << " of " << fMaterial->GetName() << G4endl;
+  G4cout << "There are " << fNpix << " pixels of dimension "
+	  << G4BestUnit(fPixWidth, "Length") << " x " << G4BestUnit(fPixDepth, "Length")
+	  << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -278,7 +258,7 @@ void DetectorConstruction::SetSize(G4double value)
 
 void DetectorConstruction::SetDepth(G4double value)
 {
-  fBoxDepth = value;
+  fPixDepth = value;
   G4RunManager::GetRunManager()->ReinitializeGeometry();
 }
 

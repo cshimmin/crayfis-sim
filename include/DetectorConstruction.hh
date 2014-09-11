@@ -72,7 +72,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
      G4VPhysicalVolume* GetWorld()      {return fPBox;};           
                     
      G4double           GetSize()       {return fBoxSize;};      
-     G4double           GetDepth()      {return fBoxDepth;};      
+     G4double           GetDepth()      {return fPixDepth;};      
      G4Material*        GetMaterial()   {return fMaterial;};
      G4int		GetNPix()	{return fNpix;};
      G4double		GetPixWidth()	{return fPixWidth;};
@@ -87,7 +87,6 @@ class DetectorConstruction : public G4VUserDetectorConstruction
      G4LogicalVolume*      fLBox;
      
      G4double              fBoxSize;
-     G4double              fBoxDepth;
      G4double		   fPixWidth;
      G4double		   fPixDepth;
      G4int		   fNpix;

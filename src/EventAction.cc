@@ -41,17 +41,24 @@
 
 #include "OutputManager.hh"
 
+#include "EventMessenger.hh"
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 EventAction::EventAction()
-:G4UserEventAction()
-{ }
+:G4UserEventAction(),
+ fMinPixOut(0.0)
+{
+  fEventMessenger = new EventMessenger(this);
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 EventAction::~EventAction()
-{ }
+{
+  delete fEventMessenger;
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -65,7 +72,7 @@ void EventAction::BeginOfEventAction(const G4Event*)
  }
  OutputManager::Instance()->resetNtuple();
  fHasHit = false;
- if (MIN_NPIX>0) {
+ if (fNPixEvent>0) {
 	 fPixAboveThreshold.clear();
  }
 }
@@ -76,14 +83,14 @@ void EventAction::EndOfEventAction(const G4Event*)
 {
   if (fTotalEnergyDeposit <= 0) return;
 
-  if (MIN_NPIX>0 && fPixAboveThreshold.size()<MIN_NPIX) {
+  if (fNPixEvent>0 && fPixAboveThreshold.size()<fNPixEvent) {
 	  return;
   }
 
   OutputManager *outman = OutputManager::Instance();
   for (int i =0; i < MAX_PIX; ++i) {
   for (int j = 0; j < MAX_PIX; ++j) {
-    if (pix_hits[i][j] > MIN_PIX_ENERGY) {
+    if (pix_hits[i][j] > fMinPixOut) {
 	    outman->addPixel(i,j,pix_hits[i][j]);
     }
   }
@@ -97,9 +104,9 @@ void EventAction::EndOfEventAction(const G4Event*)
 
 void EventAction::AddPixHit(G4double Edep, int x, int y) {
 	pix_hits[x][y] += Edep;
-	if (pix_hits[x][y] > MIN_PIX_ENERGY) {
+	if (pix_hits[x][y] > fMinPixOut) {
 		fHasHit=true;
-		if (MIN_NPIX>0 && pix_hits[x][y] > THRESHOLD_ENERGY) {
+		if (fNPixEvent>0 && pix_hits[x][y] > fMinPixEvent) {
 			fPixAboveThreshold.insert(std::make_pair(x,y));
 		}
 	}
