@@ -2,3 +2,5 @@
 *.root
 # ignore batch output files
 slurm*.out
+# ignore compiled binaries
+bin/
