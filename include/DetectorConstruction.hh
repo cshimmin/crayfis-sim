@@ -63,6 +63,8 @@ class DetectorConstruction : public G4VUserDetectorConstruction
      void SetSize     (G4double);              
      void SetDepth    (G4double);              
      void SetMaterial (G4String);
+     void SetPixWidth (G4double);
+     void SetNPix     (G4int);
 
   public:
   

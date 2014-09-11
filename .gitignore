@@ -4,3 +4,5 @@
 slurm*.out
 # ignore compiled binaries
 bin/
+# ignore vim swapfiles
+.*.swp

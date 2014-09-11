@@ -13,7 +13,6 @@ public:
 	void resetNtuple();
 	void fillNtuple();
 	void addPixel(int x, int y, double val, double avg3=0);
-	void addVPixel(int x, int y, double val, double avg3=0);
 	void setPhi(double newPhi) {phi = newPhi;};
 	double getNGen() { return fCuts->GetBinContent(1); };
 	double getNPass() { return fCuts->GetBinContent(2); };
@@ -30,12 +29,6 @@ private:
 	std::vector<double>     pix_val;
 	std::vector<double>     pix_avg3;
 	int                     pix_n;
-
-	std::vector<int>        vpix_x;
-	std::vector<int>        vpix_y;
-	std::vector<double>     vpix_val;
-	std::vector<double>	vpix_avg3;
-	int                     vpix_n;
 
 	double phi;
 };

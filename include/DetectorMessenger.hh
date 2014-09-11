@@ -42,6 +42,7 @@ class G4UIdirectory;
 class G4UIcmdWithAString;
 class G4UIcmdWithADoubleAndUnit;
 class G4UIcmdWithoutParameter;
+class G4UIcmdWithAnInteger;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -63,6 +64,8 @@ class DetectorMessenger: public G4UImessenger
     G4UIcmdWithAString*        fMaterCmd;
     G4UIcmdWithADoubleAndUnit* fSizeCmd;
     G4UIcmdWithADoubleAndUnit* fDepthCmd;
+    G4UIcmdWithADoubleAndUnit* fPixWidthCmd;
+    G4UIcmdWithAnInteger*      fNPixCmd;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

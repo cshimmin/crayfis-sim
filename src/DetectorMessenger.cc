@@ -38,6 +38,7 @@
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithoutParameter.hh"
+#include "G4UIcmdWithAnInteger.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -69,12 +70,27 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   fSizeCmd->SetToBeBroadcasted(false);
 
   fDepthCmd = new G4UIcmdWithADoubleAndUnit("/testem/det/setDepth",this);
-  fDepthCmd->SetGuidance("Set depth of the box");
+  fDepthCmd->SetGuidance("Set depth of the sensor");
   fDepthCmd->SetParameterName("Depth",false);
   fDepthCmd->SetRange("Depth>0.");
   fDepthCmd->SetUnitCategory("Length");
   fDepthCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
   fDepthCmd->SetToBeBroadcasted(false);
+
+  fPixWidthCmd = new G4UIcmdWithADoubleAndUnit("/testem/det/setPixWidth",this);
+  fPixWidthCmd->SetGuidance("Set width of the pixels.");
+  fPixWidthCmd->SetParameterName("PixWidth",false);
+  fPixWidthCmd->SetRange("PixWidth>0.");
+  fPixWidthCmd->SetUnitCategory("Length");
+  fPixWidthCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  fPixWidthCmd->SetToBeBroadcasted(false);
+
+  fNPixCmd = new G4UIcmdWithAnInteger("/testem/det/setNPix",this);
+  fNPixCmd->SetGuidance("Set number of pixels on each axis.");
+  fNPixCmd->SetParameterName("NPix",false);
+  fNPixCmd->SetRange("NPix>0");
+  fNPixCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  fNPixCmd->SetToBeBroadcasted(false);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -99,6 +115,12 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 
   if( command == fDepthCmd )
    { fDetector->SetDepth(fDepthCmd->GetNewDoubleValue(newValue));}
+
+  if( command == fPixWidthCmd )
+   { fDetector->SetPixWidth(fPixWidthCmd->GetNewDoubleValue(newValue));}
+
+  if( command == fNPixCmd )
+   { fDetector->SetNPix(fNPixCmd->GetNewIntValue(newValue));}
    
 }
 

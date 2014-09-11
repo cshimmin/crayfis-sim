@@ -282,6 +282,19 @@ void DetectorConstruction::SetDepth(G4double value)
   G4RunManager::GetRunManager()->ReinitializeGeometry();
 }
 
+void DetectorConstruction::SetPixWidth(G4double value)
+{
+  fPixWidth = value;
+  G4RunManager::GetRunManager()->ReinitializeGeometry();
+}
+
+void DetectorConstruction::SetNPix(G4int value)
+{
+  fNpix = value;
+  G4RunManager::GetRunManager()->ReinitializeGeometry();
+  // notify the output manager of the new pixel count
+}
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 

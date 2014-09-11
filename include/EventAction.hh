@@ -63,7 +63,6 @@ class EventAction : public G4UserEventAction
     void AddEdep(G4double Edep)    {fTotalEnergyDeposit += Edep;};      
     G4double GetEnergyDeposit()    {return fTotalEnergyDeposit;};    
     void AddPixHit(G4double Edep, int x, int y);
-            
     
   private:
     G4double fTotalEnergyDeposit;   

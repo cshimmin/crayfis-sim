@@ -31,12 +31,6 @@ void OutputManager::initialize() {
 	fNtuple->Branch("pix_avg3", &pix_avg3);
 	fNtuple->Branch("pix_n", &pix_n);
 
-	fNtuple->Branch("vpix_x", &vpix_x);
-	fNtuple->Branch("vpix_y", &vpix_y);
-	fNtuple->Branch("vpix_val", &vpix_val);
-	fNtuple->Branch("vpix_avg3", &vpix_avg3);
-	fNtuple->Branch("vpix_n", &vpix_n);
-
 	fNtuple->Branch("phi", &phi, "phi/D");
 }
 
@@ -55,17 +49,11 @@ void OutputManager::resetNtuple() {
 	pix_avg3.clear();
 	pix_n = 0;
 
-	vpix_x.clear();
-	vpix_y.clear();
-	vpix_val.clear();
-	vpix_avg3.clear();
-	vpix_n = 0;
 	fCuts->Fill(0);
 }
 
 void OutputManager::fillNtuple() {
 	pix_n = pix_x.size();
-	vpix_n = vpix_x.size();
 	fNtuple->Fill();
 	fCuts->Fill(1);
 }
@@ -77,9 +65,3 @@ void OutputManager::addPixel(int x, int y, double val, double avg3) {
 	pix_avg3.push_back(avg3);
 }
 
-void OutputManager::addVPixel(int x, int y, double val, double avg3) {
-	vpix_x.push_back(x);
-	vpix_y.push_back(y);
-	vpix_val.push_back(val);
-	vpix_avg3.push_back(avg3);
-}
