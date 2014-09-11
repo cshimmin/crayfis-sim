@@ -19,7 +19,7 @@ OutputManager* OutputManager::Instance() {
 
 void OutputManager::initialize() {
 	std::stringstream ss;
-	ss << G4AnalysisManager::Instance()->GetFileName() << ".ntup";
+	ss << G4AnalysisManager::Instance()->GetFileName() << ".root";
 	fOutfile = new TFile(ss.str().c_str(), "recreate");
 	fNtuple = new TTree("pixels", "pixels");
 
