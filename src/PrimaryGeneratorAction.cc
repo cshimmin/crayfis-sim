@@ -118,6 +118,8 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	  fParticleGun->GeneratePrimaryVertex(anEvent);
   }
   else  fParticleGun->GeneratePrimaryVertex(anEvent); 
+
+  OutputManager::Instance()->setEnergy(fParticleGun->GetParticleEnergy());
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

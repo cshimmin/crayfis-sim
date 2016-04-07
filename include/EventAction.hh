@@ -40,12 +40,7 @@
 
 #include <set>
 
-// Maximum number of pixels to allocate memory for.
-// Ideally we could just receive this information from
-// the config file and dynamically allocate,
-// but it's a big pain in the ass to get the
-// DetectorConstruction to communicate with this object :(
-#define MAX_PIX 1000
+#include "OutputManager.hh"
 
 class EventMessenger;
 

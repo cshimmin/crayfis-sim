@@ -39,8 +39,6 @@
 #include "G4Event.hh"
 #include "G4UnitsTable.hh"
 
-#include "OutputManager.hh"
-
 #include "EventMessenger.hh"
 
 
@@ -64,17 +62,16 @@ EventAction::~EventAction()
 
 void EventAction::BeginOfEventAction(const G4Event*)
 {
+ OutputManager *outman = OutputManager::Instance();
  fTotalEnergyDeposit = 0.;
- for (int i = 0; i < MAX_PIX; ++i) {
- for (int j = 0; j < MAX_PIX; ++j) {
-    pix_hits[i][j] = 0;
- }
- }
+ OutputManager::Instance()->clearHits();
  OutputManager::Instance()->resetNtuple();
+
  fHasHit = false;
  if (fNPixEvent>0) {
 	 fPixAboveThreshold.clear();
  }
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -83,19 +80,17 @@ void EventAction::EndOfEventAction(const G4Event*)
 {
   if (fTotalEnergyDeposit <= 0) return;
 
+  OutputManager *outman = OutputManager::Instance();
+
+  outman->fillEdep();
+
   if (fNPixEvent>0 && fPixAboveThreshold.size()<fNPixEvent) {
 	  return;
   }
 
-  OutputManager *outman = OutputManager::Instance();
-  for (int i =0; i < MAX_PIX; ++i) {
-  for (int j = 0; j < MAX_PIX; ++j) {
-    if (pix_hits[i][j] > fMinPixOut) {
-	    outman->addPixel(i,j,pix_hits[i][j]);
-    }
-  }
-  }
-
+  outman->setEdep(fTotalEnergyDeposit);
+  outman->writePixels(fMinPixOut);
+ 
   outman->fillNtuple();
 }
 
@@ -103,10 +98,11 @@ void EventAction::EndOfEventAction(const G4Event*)
 
 
 void EventAction::AddPixHit(G4double Edep, int x, int y) {
-	pix_hits[x][y] += Edep;
-	if (pix_hits[x][y] > fMinPixOut) {
+	OutputManager *outman = OutputManager::Instance();
+	outman->pix_hits[x][y] += Edep;
+	if (outman->pix_hits[x][y] > fMinPixOut) {
 		fHasHit=true;
-		if (fNPixEvent>0 && pix_hits[x][y] > fMinPixEvent) {
+		if (fNPixEvent>0 && outman->pix_hits[x][y] > fMinPixEvent) {
 			fPixAboveThreshold.insert(std::make_pair(x,y));
 		}
 	}
