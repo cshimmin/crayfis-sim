@@ -97,7 +97,6 @@ void PrimaryGeneratorAction::SetDefaultKinematic(G4int front)
 
 void PrimaryGeneratorAction::SetEnergyHistogramFile(const G4String& fileName)
 {
-  std::cout << "Setting energy histogram to: " << fileName << std::endl;
   if (fEnergyHistogram) {
     delete fEnergyHistogram;
     fEnergyHistogram = 0;
@@ -112,7 +111,6 @@ void PrimaryGeneratorAction::SetEnergyHistogramFile(const G4String& fileName)
   fEnergyHistogram = (TH1F*) f->Get("particleEnergy");
   fEnergyHistogram->SetDirectory(0);
   f->Close();
-  std::cout << "Closed input file." << std::endl;
   fEnergyHistogram->Print();
 }
 
@@ -149,14 +147,12 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   if (fEnergyHistogram) {
     double energy = fEnergyHistogram->GetRandom();
     fParticleGun->SetParticleEnergy(energy);
-    std::cout << "PGA:: setting particle energy to: " << energy << std::endl;
   }
 
   fParticleGun->GeneratePrimaryVertex(anEvent);
 
 
   double energy_out = fParticleGun->GetParticleEnergy();
-  std::cout << "PGA:: getParticleEnergy returns:  " << energy_out << std::endl;
   OutputManager::Instance()->setEnergy(energy_out);
 }
 
