@@ -43,6 +43,9 @@
 #include "G4SystemOfUnits.hh"
 #include "Randomize.hh"
 
+#include "TFile.h"
+#include "TH1F.h"
+
 #include "OutputManager.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -52,7 +55,8 @@ PrimaryGeneratorAction::PrimaryGeneratorAction( DetectorConstruction* det)
  fParticleGun(0),
  fDetector(det),
  fRndmBeam(0),       
- fGunMessenger(0)     
+ fGunMessenger(0),
+ fEnergyHistogram(0)
                                               
 {
   fParticleGun  = new G4ParticleGun(1);
@@ -70,6 +74,10 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 {
   delete fParticleGun;
   delete fGunMessenger;  
+
+  if (fEnergyHistogram) {
+    delete fEnergyHistogram;
+  }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -85,6 +93,27 @@ void PrimaryGeneratorAction::SetDefaultKinematic(G4int front)
   //if (front) position = -0.5*(fDetector->GetSize());
   if (front) position = -0.5*(fDetector->GetPixDepth());
   fParticleGun->SetParticlePosition(G4ThreeVector(position,0.*cm,0.*cm));
+}
+
+void PrimaryGeneratorAction::SetEnergyHistogramFile(const G4String& fileName)
+{
+  std::cout << "Setting energy histogram to: " << fileName << std::endl;
+  if (fEnergyHistogram) {
+    delete fEnergyHistogram;
+    fEnergyHistogram = 0;
+  }
+
+  if (fileName == "") {
+    return;
+  }
+
+  TFile *f = TFile::Open(fileName);
+  f->ls();
+  fEnergyHistogram = (TH1F*) f->Get("particleEnergy");
+  fEnergyHistogram->SetDirectory(0);
+  f->Close();
+  std::cout << "Closed input file." << std::endl;
+  fEnergyHistogram->Print();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -115,11 +144,20 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	  newMomentum.setPhi(newPhi);
 	  OutputManager::Instance()->setPhi(newPhi);
 	  fParticleGun->SetParticleMomentumDirection(newMomentum);
-	  fParticleGun->GeneratePrimaryVertex(anEvent);
   }
-  else  fParticleGun->GeneratePrimaryVertex(anEvent); 
 
-  OutputManager::Instance()->setEnergy(fParticleGun->GetParticleEnergy());
+  if (fEnergyHistogram) {
+    double energy = fEnergyHistogram->GetRandom();
+    fParticleGun->SetParticleEnergy(energy);
+    std::cout << "PGA:: setting particle energy to: " << energy << std::endl;
+  }
+
+  fParticleGun->GeneratePrimaryVertex(anEvent);
+
+
+  double energy_out = fParticleGun->GetParticleEnergy();
+  std::cout << "PGA:: getParticleEnergy returns:  " << energy_out << std::endl;
+  OutputManager::Instance()->setEnergy(energy_out);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

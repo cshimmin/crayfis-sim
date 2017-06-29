@@ -43,6 +43,7 @@
 class G4Event;
 class DetectorConstruction;
 class PrimaryGeneratorMessenger;
+class TH1F;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -55,6 +56,7 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
   public:
     void SetDefaultKinematic(G4int);
     void SetRndmBeam(G4double val)  {fRndmBeam = val;}   
+    void SetEnergyHistogramFile(const G4String& fileName);
     virtual void GeneratePrimaries(G4Event*);
     
     G4ParticleGun* GetParticleGun() {return fParticleGun;}
@@ -64,6 +66,7 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
     DetectorConstruction*      fDetector;
     G4double                   fRndmBeam;       
     PrimaryGeneratorMessenger* fGunMessenger;     
+    TH1F*                      fEnergyHistogram;
     G4RandGauss* fRandomizer;
 };
 

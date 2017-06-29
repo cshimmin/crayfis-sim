@@ -36,6 +36,7 @@
 #include "PrimaryGeneratorAction.hh"
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithADouble.hh"
+#include "G4UIcmdWithAString.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -44,7 +45,8 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(
 :G4UImessenger(),Action(Gun),
  fGunDir(0), 
  fDefaultCmd(0),
- fRndmCmd(0)
+ fRndmCmd(0),
+ fHistoCmd(0)
 {
   fGunDir = new G4UIdirectory("/testem/gun/");
   fGunDir->SetGuidance("gun control");
@@ -62,6 +64,13 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(
   fRndmCmd->SetParameterName("rBeam",false);
   fRndmCmd->SetRange("rBeam>=0.&&rBeam<=1.");
   fRndmCmd->AvailableForStates(G4State_Idle);  
+
+  fHistoCmd = new G4UIcmdWithAString("/testem/gun/energyHisto",this);
+  fHistoCmd->SetGuidance("file containing a histogram with the desired energy distribution.");
+  fHistoCmd->SetGuidance("The file should contain a TH1F named 'particleEnergy'.");
+  fHistoCmd->SetParameterName("histo",true);
+  fHistoCmd->SetDefaultValue("");
+  fHistoCmd->AvailableForStates(G4State_Idle);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -70,6 +79,7 @@ PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger()
 {
   delete fDefaultCmd;
   delete fRndmCmd;
+  delete fHistoCmd;
   delete fGunDir;
 }
 
@@ -83,6 +93,10 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,
    
   if (command == fRndmCmd)
    {Action->SetRndmBeam(fRndmCmd->GetNewDoubleValue(newValue));}   
+
+  if (command == fHistoCmd) {
+    Action->SetEnergyHistogramFile(newValue);
+  }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -51,6 +51,14 @@
 /testem/gun/rndm {doRandom}
 
 
+# uncomment the following line if you want the energy
+# to be sampled from a histogram.
+# the file should contain a TH1F named "particleEnergy",
+# with the desired distribution in units of keV.
+
+#/testem/gun/energyHisto spectrum.root
+
+
 
 # how often to print progress
 /run/printProgress 50000
