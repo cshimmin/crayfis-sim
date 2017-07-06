@@ -1,0 +1,70 @@
+# example driver macro
+
+# beam energy in keV
+/control/alias beamEnergy {energy}
+# beam particle (gamma, mu-, e-, etc)
+/control/alias bParticle {particle}
+
+# number of events to generate
+/control/alias ngen {ngen}
+
+# control the geometry/number of pixels
+/control/alias pixDepth 700
+/control/alias pixWidth 1.5
+/control/alias npix 500
+
+
+# set the minimum pixel energy to write out
+/testem/evt/setMinPixOut 3.6 eV
+# set the minimum pixel energy required to keep event
+/testem/evt/setMinPixEvent 36 eV
+# set the number of pixels above MinPixEvent threshold to require
+/testem/evt/setNPixEvent 1
+
+
+# random seeds
+/control/alias seed1 {seed1}
+/control/alias seed2 {seed2}
+/random/setSeeds {{seed1}} {{seed2}}
+
+# set this to 1 if you want the beam
+# angle to be randomly distributed
+/control/alias doRandom 0
+
+
+
+/control/verbose 2
+/run/verbose 2
+
+/testem/det/setMat Silicon
+/testem/det/setPixWidth {{pixWidth}} um
+/testem/det/setDepth {{pixDepth}} um
+/testem/det/setNPix {{npix}}
+
+
+/run/initialize
+
+
+/testem/gun/setDefault 
+/gun/particle {{bParticle}}
+/gun/energy {{beamEnergy}} keV
+/testem/gun/rndm {{doRandom}}
+
+
+# uncomment the following line if you want the energy
+# to be sampled from a histogram.
+# the file should contain a TH1F named "particleEnergy",
+# with the desired distribution in units of keV.
+
+#/testem/gun/energyHisto spectrum.root
+
+
+
+# how often to print progress
+/run/printProgress 50000
+
+# base output filename
+/analysis/setFileName {outfile}
+
+# run the specified number of events
+/run/beamOn {{ngen}}
