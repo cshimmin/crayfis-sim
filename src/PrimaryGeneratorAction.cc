@@ -134,11 +134,13 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   fParticleGun->SetParticlePosition(G4ThreeVector(0.5*fDetector->GetDepth(),0,0));
   if (fRndmBeam > 0.) {
 	  // randomize beam direction
-	  G4ThreeVector newMomentum(-1.0,0.,0.);
+	  //G4ThreeVector newMomentum(-1.0,0.,0.);
 	  //double newPhi = (2*G4UniformRand()-1.)*3.14159/2.0;
 	  double newPhi = fRandomizer->fire();
-	  newMomentum.setPhi(newPhi);
-	  OutputManager::Instance()->setPhi(newPhi);
+	  //newMomentum.setTheta(newTheta + 3.14159);
+    G4ThreeVector newMomentum;
+    newMomentum.setRThetaPhi(1, 3.14159/2., 3.14159 + newPhi);
+	  //OutputManager::Instance()->setPhi(newTheta);
 	  fParticleGun->SetParticleMomentumDirection(newMomentum);
   }
 
