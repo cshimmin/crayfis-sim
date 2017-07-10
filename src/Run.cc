@@ -75,15 +75,21 @@ void Run::PrintSummary() const
   G4int prec = G4cout.precision(5);
       
   G4int nbOfEvents     = GetNumberOfEvent();
-  G4String partName    = fParticle->GetParticleName();    
-  G4double length      = fDetector->GetSize();    
+  G4String partName    = fParticle->GetParticleName();
+  G4double frontDepth      = fDetector->GetFrontDepth();
+  G4double pixDepth      = fDetector->GetPixDepth();
+  G4Material* frontMaterial = fDetector->GetFrontMaterial();
   G4Material* material = fDetector->GetMaterial();
   G4double density     = material->GetDensity();
      
   G4cout << "\n ======================== run summary ======================\n";
   G4cout << "\n The run was: " << nbOfEvents << " " << partName << " of "
-         << G4BestUnit(fEkin,"Energy") << " through " 
-         << G4BestUnit(length,"Length") << " of "
+         << G4BestUnit(fEkin,"Energy") << " through \n"
+	 << G4BestUnit(frontDepth,"Length") << " of "
+	 << frontMaterial->GetName() << " (density: "
+	 << G4BestUnit(frontMaterial->GetDensity(),"Volumic Mass") << ")\n"
+	 << " and \n "
+         << G4BestUnit(pixDepth,"Length") << " of "
          << material->GetName() << " (density: " 
          << G4BestUnit(density,"Volumic Mass") << ")" << G4endl;           
   G4cout << "\n ============================================================\n";

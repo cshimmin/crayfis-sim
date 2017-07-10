@@ -1,0 +1,24 @@
+/testem/det/setNPix 9
+/testem/det/setPixWidth 50 um
+/testem/det/setDepth 2.5 um
+
+/testem/det/setFrontDepth 1000 um
+#/testem/det/setFrontDepth 1 um
+/testem/det/setFrontMat Aluminum
+
+/testem/evt/setMinPixEvent 150 eV
+/testem/evt/setNPixEvent 1
+
+/gun/energy 160 keV
+/gun/particle e-
+
+/run/initialize
+
+/vis/open OGLI
+/vis/drawVolume
+/vis/viewer/set/viewpointThetaPhi 0 20
+/vis/scene/add/trajectories
+#/vis/scene/add/axes
+
+/vis/scene/endOfEventAction accumulate 1000
+/vis/modeling/trajectories/create/drawByParticleID

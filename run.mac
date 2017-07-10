@@ -36,6 +36,9 @@
 /control/verbose 2
 /run/verbose 2
 
+/testem/det/setFrontMat Air
+/testem/det/setFrontDepth 10 mm
+
 /testem/det/setMat Silicon
 /testem/det/setPixWidth {pixWidth} um
 /testem/det/setDepth {pixDepth} um
@@ -45,7 +48,6 @@
 /run/initialize
 
 
-/testem/gun/setDefault 
 /gun/particle {bParticle}
 /gun/energy {beamEnergy} keV
 /testem/gun/rndm {doRandom}

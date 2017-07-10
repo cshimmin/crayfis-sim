@@ -1,43 +1,10 @@
-//
-// ********************************************************************
-// * License and Disclaimer                                           *
-// *                                                                  *
-// * The  Geant4 software  is  copyright of the Copyright Holders  of *
-// * the Geant4 Collaboration.  It is provided  under  the terms  and *
-// * conditions of the Geant4 Software License,  included in the file *
-// * LICENSE and available at  http://cern.ch/geant4/license .  These *
-// * include a list of copyright holders.                             *
-// *                                                                  *
-// * Neither the authors of this software system, nor their employing *
-// * institutes,nor the agencies providing financial support for this *
-// * work  make  any representation or  warranty, express or implied, *
-// * regarding  this  software system or assume any liability for its *
-// * use.  Please see the license in the file  LICENSE  and URL above *
-// * for the full disclaimer and the limitation of liability.         *
-// *                                                                  *
-// * This  code  implementation is the result of  the  scientific and *
-// * technical work of the GEANT4 collaboration.                      *
-// * By using,  copying,  modifying or  distributing the software (or *
-// * any work based  on the software)  you  agree  to acknowledge its *
-// * use  in  resulting  scientific  publications,  and indicate your *
-// * acceptance of all terms of the Geant4 Software license.          *
-// ********************************************************************
-//
-/// \file electromagnetic/TestEm1/include/DetectorConstruction.hh
-/// \brief Definition of the DetectorConstruction class
-//
-// $Id: DetectorConstruction.hh 77289 2013-11-22 10:53:37Z gcosmo $
-//
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 #ifndef DetectorConstruction_h
 #define DetectorConstruction_h 1
 
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 #include "G4Cache.hh"
+#include "G4Box.hh"
 
 class G4LogicalVolume;
 class G4Material;
@@ -55,14 +22,18 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     DetectorConstruction();
    ~DetectorConstruction();
 
+   enum ModelComponent {
+	   FRONT_LAYER = 0,
+	   DETECTOR_LAYER,
+   };
+
   public:
   
      virtual G4VPhysicalVolume* Construct();
      virtual void ConstructSDandField();
      
-     void SetSize     (G4double);              
-     void SetDepth    (G4double);              
-     void SetMaterial (G4String);
+     void SetDepth    (G4double, ModelComponent);
+     void SetMaterial (G4String, ModelComponent);
      void SetPixWidth (G4double);
      void SetNPix     (G4int);
 
@@ -71,25 +42,29 @@ class DetectorConstruction : public G4VUserDetectorConstruction
      const
      G4VPhysicalVolume* GetWorld()      {return fPBox;};           
                     
-     G4double           GetSize()       {return fBoxSize;};      
-     G4double           GetDepth()      {return fPixDepth;};      
+     G4double           GetDepth()      {return fPixDepth+fFrontDepth;};
+     //G4double GetWorldDepth() { return fSensorBox->GetXHalfLength()*2.; }
+     G4double GetWorldDepth() { return fFrontDepth; }
      G4Material*        GetMaterial()   {return fMaterial;};
      G4int		GetNPix()	{return fNpix;};
      G4double		GetPixWidth()	{return fPixWidth;};
      G4double		GetPixDepth()   {return fPixDepth;};
+     G4Material*        GetFrontMaterial() {return fFrontMaterial;};
+     G4double		GetFrontDepth()   {return fFrontDepth;};
 
      
      void               PrintParameters();
                        
   private:
   
+     G4Box*                fSensorBox;
      G4VPhysicalVolume*    fPBox;
-     G4LogicalVolume*      fLBox;
      
-     G4double              fBoxSize;
+     G4double              fFrontDepth;
      G4double		   fPixWidth;
      G4double		   fPixDepth;
      G4int		   fNpix;
+     G4Material*           fFrontMaterial;
      G4Material*           fMaterial;
      G4Material*           fAir;
 

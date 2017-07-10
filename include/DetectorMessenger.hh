@@ -61,8 +61,9 @@ class DetectorMessenger: public G4UImessenger
     
     G4UIdirectory*             fTestemDir;
     G4UIdirectory*             fDetDir;
-    G4UIcmdWithAString*        fMaterCmd;
-    G4UIcmdWithADoubleAndUnit* fSizeCmd;
+    G4UIcmdWithAString*        fFrontMaterialCmd;
+    G4UIcmdWithAString*        fMaterialCmd;
+    G4UIcmdWithADoubleAndUnit* fFrontDepthCmd;
     G4UIcmdWithADoubleAndUnit* fDepthCmd;
     G4UIcmdWithADoubleAndUnit* fPixWidthCmd;
     G4UIcmdWithAnInteger*      fNPixCmd;

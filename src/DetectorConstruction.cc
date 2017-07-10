@@ -1,37 +1,3 @@
-//
-// ********************************************************************
-// * License and Disclaimer                                           *
-// *                                                                  *
-// * The  Geant4 software  is  copyright of the Copyright Holders  of *
-// * the Geant4 Collaboration.  It is provided  under  the terms  and *
-// * conditions of the Geant4 Software License,  included in the file *
-// * LICENSE and available at  http://cern.ch/geant4/license .  These *
-// * include a list of copyright holders.                             *
-// *                                                                  *
-// * Neither the authors of this software system, nor their employing *
-// * institutes,nor the agencies providing financial support for this *
-// * work  make  any representation or  warranty, express or implied, *
-// * regarding  this  software system or assume any liability for its *
-// * use.  Please see the license in the file  LICENSE  and URL above *
-// * for the full disclaimer and the limitation of liability.         *
-// *                                                                  *
-// * This  code  implementation is the result of  the  scientific and *
-// * technical work of the GEANT4 collaboration.                      *
-// * By using,  copying,  modifying or  distributing the software (or *
-// * any work based  on the software)  you  agree  to acknowledge its *
-// * use  in  resulting  scientific  publications,  and indicate your *
-// * acceptance of all terms of the Geant4 Software license.          *
-// ********************************************************************
-//
-/// \file electromagnetic/TestEm1/src/DetectorConstruction.cc
-/// \brief Implementation of the DetectorConstruction class
-//
-// $Id: DetectorConstruction.cc 77289 2013-11-22 10:53:37Z gcosmo $
-// 
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 #include "DetectorConstruction.hh"
 #include "DetectorMessenger.hh"
 
@@ -57,14 +23,15 @@
 #include <sstream>
 
 DetectorConstruction::DetectorConstruction()
-:G4VUserDetectorConstruction(),fPBox(0), fLBox(0), fMaterial(0)
+:G4VUserDetectorConstruction(),fSensorBox(0),fPBox(0), fFrontMaterial(0), fMaterial(0)
 {
-  fBoxSize = 1*cm;
   fPixWidth = 1.5*um;
   fPixDepth = 700*um;
+  fFrontDepth = 1*mm;
   fNpix = 1000;
   DefineMaterials();
-  SetMaterial("Silicon");  
+  SetMaterial("Air", FRONT_LAYER);
+  SetMaterial("Silicon", DETECTOR_LAYER);
   fDetectorMessenger = new DetectorMessenger(this);
 }
 
@@ -184,33 +151,46 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
   G4LogicalVolumeStore::GetInstance()->Clean();
   G4SolidStore::GetInstance()->Clean();
 
-  G4Box* sensorBox = new G4Box("SensorBox", fPixDepth, fNpix*fPixWidth, fNpix*fPixWidth);
+  G4Box* sensorBox = new G4Box("SensorBox", 0.5*(fPixDepth+fFrontDepth), 0.5*(fNpix*fPixWidth), 0.5*(fNpix*fPixWidth));
+  fSensorBox = sensorBox;
   G4LogicalVolume* sensorBoxL = new G4LogicalVolume(sensorBox, fAir, "SensorBoxL");
   fPBox = new G4PVPlacement(0, G4ThreeVector(), sensorBoxL, "SensorBoxP", 0, false, 0);
 
-  G4Box* pixBox = new G4Box("PixelBox", fPixDepth, fPixWidth, fPixWidth);
+  if (fPixDepth > 0) {
+  G4Box* frontBox = new G4Box("FrontBox", fFrontDepth/2., fNpix*fPixWidth/2., fNpix*fPixWidth/2.);
+  G4LogicalVolume* frontBoxL = new G4LogicalVolume(frontBox, fFrontMaterial, "FrontBoxL");
+  G4PVPlacement *fbP = new G4PVPlacement(0,
+                                         G4ThreeVector(fPixDepth/2., 0, 0),
+                                         frontBoxL,
+                                         "front_box",
+                                         sensorBoxL,
+                                         false,
+                                         0);
+  }
+  
+  G4Box* pixBox = new G4Box("PixelBox", fPixDepth/2., fPixWidth/2., fPixWidth/2.);
   G4LogicalVolume* pixBoxL = new G4LogicalVolume(pixBox, fMaterial, "pixBoxL");
 
   //std::cout << "BOARK: Setting material to: " << fMaterial->GetName() << std::endl;
   G4cout << "Setting material to: " << fMaterial->GetName() << G4endl;
   PixelPVPlacement *pixBoxP;
   for (int ipix = 0; ipix<fNpix; ++ipix) {
-	  for (int jpix = 0; jpix<fNpix; ++jpix) {
-		  std::stringstream ss;
-		  ss << "pixelP";
-		  //ss << "pix_"<<ipix<<"_"<<jpix;
-		  pixBoxP = new PixelPVPlacement(0,
-				  G4ThreeVector(0,
-					  ipix*fPixWidth- fNpix*fPixWidth/2.0,
-					  jpix*fPixWidth- fNpix*fPixWidth/2.0),
-				  pixBoxL,
-				  ss.str(),
-				  sensorBoxL,
-				  false,
-				  0);
-		  pixBoxP->idx_x = ipix;
-		  pixBoxP->idx_y = jpix;
-	  }
+    for (int jpix = 0; jpix<fNpix; ++jpix) {
+      std::stringstream ss;
+      ss << "pixelP";
+      //ss << "pix_"<<ipix<<"_"<<jpix;
+      pixBoxP = new PixelPVPlacement(0,
+                                     G4ThreeVector(-fFrontDepth/2.,
+                                     ipix*fPixWidth - (fNpix-1)*fPixWidth/2.,
+                                     jpix*fPixWidth - (fNpix-1)*fPixWidth/2.),
+                                     pixBoxL,
+                                     ss.str(),
+                                     sensorBoxL,
+                                     false,
+                                     0);
+      pixBoxP->idx_x = ipix;
+      pixBoxP->idx_y = jpix;
+    }
   }
                           
   PrintParameters();
@@ -231,7 +211,7 @@ void DetectorConstruction::PrintParameters()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void DetectorConstruction::SetMaterial(G4String materialChoice)
+void DetectorConstruction::SetMaterial(G4String materialChoice, ModelComponent comp)
 {
   // search the material by its name
   ////G4Material* pttoMaterial = G4Material::GetMaterial(materialChoice);
@@ -239,9 +219,18 @@ void DetectorConstruction::SetMaterial(G4String materialChoice)
      G4NistManager::Instance()->FindOrBuildMaterial(materialChoice);
   
   if (pttoMaterial) {
-      fMaterial = pttoMaterial;
-      if ( fLBox ) fLBox->SetMaterial(fMaterial);
-    } else {
+    switch (comp) {
+      case FRONT_LAYER:
+        fFrontMaterial = pttoMaterial;
+        break;
+      case DETECTOR_LAYER:
+        fMaterial = pttoMaterial;
+        break;
+      default:
+        break;
+    }
+  }
+  else {
     G4cout << "\n--> warning from DetectorConstruction::SetMaterial : "
            << materialChoice << " not found" << G4endl;
   }
@@ -250,15 +239,18 @@ void DetectorConstruction::SetMaterial(G4String materialChoice)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void DetectorConstruction::SetSize(G4double value)
+void DetectorConstruction::SetDepth(G4double value, ModelComponent comp)
 {
-  fBoxSize = value;
-  G4RunManager::GetRunManager()->ReinitializeGeometry();
-}
-
-void DetectorConstruction::SetDepth(G4double value)
-{
-  fPixDepth = value;
+  switch (comp) {
+    case FRONT_LAYER:
+      fFrontDepth = value;
+      break;
+    case DETECTOR_LAYER:
+      fPixDepth = value;
+      break;
+    default:
+      break;
+  }
   G4RunManager::GetRunManager()->ReinitializeGeometry();
 }
 

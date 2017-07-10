@@ -60,7 +60,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction( DetectorConstruction* det)
                                               
 {
   fParticleGun  = new G4ParticleGun(1);
-  SetDefaultKinematic(1);
+  SetDefaultKinematic();
   fRndmBeam = 0.;
     
   //create a messenger for this class
@@ -82,17 +82,14 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void PrimaryGeneratorAction::SetDefaultKinematic(G4int front)
+void PrimaryGeneratorAction::SetDefaultKinematic()
 {
   G4ParticleDefinition* particle
            = G4ParticleTable::GetParticleTable()->FindParticle("e-");
   fParticleGun->SetParticleDefinition(particle);
-  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(1.,0.,0.));
+  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(-1.,0.,0.));
   fParticleGun->SetParticleEnergy(100*MeV);
-  G4double position = 0.*cm;
-  //if (front) position = -0.5*(fDetector->GetSize());
-  if (front) position = -0.5*(fDetector->GetPixDepth());
-  fParticleGun->SetParticlePosition(G4ThreeVector(position,0.*cm,0.*cm));
+  fParticleGun->SetParticlePosition(G4ThreeVector(0.5*fDetector->GetDepth(),0.,0.));
 }
 
 void PrimaryGeneratorAction::SetEnergyHistogramFile(const G4String& fileName)
@@ -134,9 +131,10 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       fParticleGun->SetParticlePosition(oldPosition);      
     }
   */
+  fParticleGun->SetParticlePosition(G4ThreeVector(0.5*fDetector->GetDepth(),0,0));
   if (fRndmBeam > 0.) {
 	  // randomize beam direction
-	  G4ThreeVector newMomentum(1.0,0.,0.);
+	  G4ThreeVector newMomentum(-1.0,0.,0.);
 	  //double newPhi = (2*G4UniformRand()-1.)*3.14159/2.0;
 	  double newPhi = fRandomizer->fire();
 	  newMomentum.setPhi(newPhi);
