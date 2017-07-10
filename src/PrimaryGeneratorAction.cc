@@ -87,9 +87,9 @@ void PrimaryGeneratorAction::SetDefaultKinematic()
   G4ParticleDefinition* particle
            = G4ParticleTable::GetParticleTable()->FindParticle("e-");
   fParticleGun->SetParticleDefinition(particle);
-  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(-1.,0.,0.));
+  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
   fParticleGun->SetParticleEnergy(100*MeV);
-  fParticleGun->SetParticlePosition(G4ThreeVector(0.5*fDetector->GetDepth(),0.,0.));
+  fParticleGun->SetParticlePosition(G4ThreeVector(0.,0.,-0.5*fDetector->GetDepth()));
 }
 
 void PrimaryGeneratorAction::SetEnergyHistogramFile(const G4String& fileName)
@@ -131,15 +131,16 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       fParticleGun->SetParticlePosition(oldPosition);      
     }
   */
-  fParticleGun->SetParticlePosition(G4ThreeVector(0.5*fDetector->GetDepth(),0,0));
+  fParticleGun->SetParticlePosition(G4ThreeVector(0.,0.,-0.5*fDetector->GetDepth()));
   if (fRndmBeam > 0.) {
 	  // randomize beam direction
 	  //G4ThreeVector newMomentum(-1.0,0.,0.);
 	  //double newPhi = (2*G4UniformRand()-1.)*3.14159/2.0;
-	  double newPhi = fRandomizer->fire();
+	  double newTheta = fRandomizer->fire();
+    double newPhi = (2*G4UniformRand()-1.)*3.14159/2.;
 	  //newMomentum.setTheta(newTheta + 3.14159);
     G4ThreeVector newMomentum;
-    newMomentum.setRThetaPhi(1, 3.14159/2., 3.14159 + newPhi);
+    newMomentum.setRThetaPhi(1, newTheta, newPhi);
 	  //OutputManager::Instance()->setPhi(newTheta);
 	  fParticleGun->SetParticleMomentumDirection(newMomentum);
   }

@@ -151,16 +151,16 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
   G4LogicalVolumeStore::GetInstance()->Clean();
   G4SolidStore::GetInstance()->Clean();
 
-  G4Box* sensorBox = new G4Box("SensorBox", 0.5*(fPixDepth+fFrontDepth), 0.5*(fNpix*fPixWidth), 0.5*(fNpix*fPixWidth));
+  G4Box* sensorBox = new G4Box("SensorBox", 0.5*(fNpix*fPixWidth), 0.5*(fNpix*fPixWidth), 0.5*(fPixDepth+fFrontDepth));
   fSensorBox = sensorBox;
   G4LogicalVolume* sensorBoxL = new G4LogicalVolume(sensorBox, fAir, "SensorBoxL");
   fPBox = new G4PVPlacement(0, G4ThreeVector(), sensorBoxL, "SensorBoxP", 0, false, 0);
 
   if (fPixDepth > 0) {
-  G4Box* frontBox = new G4Box("FrontBox", fFrontDepth/2., fNpix*fPixWidth/2., fNpix*fPixWidth/2.);
+  G4Box* frontBox = new G4Box("FrontBox", fNpix*fPixWidth/2., fNpix*fPixWidth/2., fFrontDepth/2.);
   G4LogicalVolume* frontBoxL = new G4LogicalVolume(frontBox, fFrontMaterial, "FrontBoxL");
   G4PVPlacement *fbP = new G4PVPlacement(0,
-                                         G4ThreeVector(fPixDepth/2., 0, 0),
+                                         G4ThreeVector(0, 0,-fPixDepth/2.),
                                          frontBoxL,
                                          "front_box",
                                          sensorBoxL,
@@ -168,7 +168,7 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
                                          0);
   }
   
-  G4Box* pixBox = new G4Box("PixelBox", fPixDepth/2., fPixWidth/2., fPixWidth/2.);
+  G4Box* pixBox = new G4Box("PixelBox", fPixWidth/2., fPixWidth/2., fPixDepth/2.);
   G4LogicalVolume* pixBoxL = new G4LogicalVolume(pixBox, fMaterial, "pixBoxL");
 
   //std::cout << "BOARK: Setting material to: " << fMaterial->GetName() << std::endl;
@@ -180,9 +180,10 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
       ss << "pixelP";
       //ss << "pix_"<<ipix<<"_"<<jpix;
       pixBoxP = new PixelPVPlacement(0,
-                                     G4ThreeVector(-fFrontDepth/2.,
+                                     G4ThreeVector(
                                      ipix*fPixWidth - (fNpix-1)*fPixWidth/2.,
-                                     jpix*fPixWidth - (fNpix-1)*fPixWidth/2.),
+                                     jpix*fPixWidth - (fNpix-1)*fPixWidth/2.,
+                                     +fFrontDepth/2.),
                                      pixBoxL,
                                      ss.str(),
                                      sensorBoxL,
