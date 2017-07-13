@@ -66,11 +66,8 @@ class EventAction : public G4UserEventAction
     
   private:
     G4double fTotalEnergyDeposit;   
-    G4double pix_hits[MAX_PIX][MAX_PIX];
 
-    bool fHasHit;
-
-    std::set<std::pair<int, int> > fPixAboveThreshold;
+    int fNhits;
 
     G4double fMinPixOut;
     G4double fMinPixEvent;
