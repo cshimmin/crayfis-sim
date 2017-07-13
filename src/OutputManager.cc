@@ -29,6 +29,7 @@ void OutputManager::initialize() {
 	fNtuple->Branch("pix_x", &pix_x);
 	fNtuple->Branch("pix_y", &pix_y);
 	fNtuple->Branch("pix_val", &pix_val);
+  /*
 	fNtuple->Branch("pix_n1", &pix_n1);
 	fNtuple->Branch("pix_n2", &pix_n2);
 	fNtuple->Branch("pix_n3", &pix_n3);
@@ -41,6 +42,7 @@ void OutputManager::initialize() {
 	fNtuple->Branch("pix_r", &pix_r);
 	fNtuple->Branch("pix_g", &pix_g);
 	fNtuple->Branch("pix_b", &pix_b);
+  */
 	fNtuple->Branch("pix_n", &pix_n);
 
 	fNtuple->Branch("phi", &phi, "phi/D");
@@ -62,6 +64,7 @@ void OutputManager::resetNtuple() {
 	pix_x.clear();
 	pix_y.clear();
 	pix_val.clear();
+  /*
 	pix_n1.clear();
 	pix_n2.clear();
 	pix_n3.clear();
@@ -74,6 +77,7 @@ void OutputManager::resetNtuple() {
 	pix_r.clear();
 	pix_g.clear();
 	pix_b.clear();
+  */
 	pix_n = 0;
 
 	fCuts->Fill(0);
@@ -93,7 +97,8 @@ void OutputManager::addPixel(int x, int y) {
 	pix_y.push_back(y);
 	pix_val.push_back(pix_hits[x][y]);
 
-	double val = pix_hits[x][y];
+	G4double val = pix_hits[x][y];
+  /*
 	double n1 = (x>0&&y>0) ? pix_hits[x-1][y-1] : 0;
 	double n2 = (y>0) ? pix_hits[x][y-1] : 0;
 	double n3 = (y>0) ? pix_hits[x+1][y-1] : 0;
@@ -155,9 +160,10 @@ void OutputManager::addPixel(int x, int y) {
 	pix_r.push_back(r);
 	pix_g.push_back(g);
 	pix_b.push_back(b);
+  */
 }
 
-void OutputManager::writePixels(double threshold) {
+void OutputManager::writePixels(G4double threshold) {
 	for (int i =0; i < MAX_PIX; ++i) {
 		for (int j = 0; j < MAX_PIX; ++j) {
 			if (pix_hits[i][j] > threshold) {

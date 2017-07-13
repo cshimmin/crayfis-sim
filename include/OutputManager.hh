@@ -2,6 +2,8 @@
 #include "TTree.h"
 #include "TH1I.h"
 
+#include "globals.hh"
+
 // Maximum number of pixels to allocate memory for.
 // Ideally we could just receive this information from
 // the config file and dynamically allocate,
@@ -28,10 +30,10 @@ public:
 	double getNGen() { return fCuts->GetBinContent(1); };
 	double getNPass() { return fCuts->GetBinContent(2); };
 
-	void writePixels(double threshold);
+	void writePixels(G4double threshold);
 	void clearHits();
 
-	double pix_hits[MAX_PIX+1][MAX_PIX+1];
+	G4double pix_hits[MAX_PIX+1][MAX_PIX+1];
 private:
 	OutputManager();
 	static OutputManager* _inst;
@@ -44,6 +46,7 @@ private:
 	std::vector<int>        pix_x;
 	std::vector<int>        pix_y;
 	std::vector<double>     pix_val;
+  /*
 	std::vector<double>     pix_n1;
 	std::vector<double>     pix_n2;
 	std::vector<double>     pix_n3;
@@ -56,6 +59,7 @@ private:
 	std::vector<double>    	pix_r;
 	std::vector<double>    	pix_g;
 	std::vector<double>    	pix_b;
+  */
 	int                     pix_n;
 
 	double phi;
