@@ -35,9 +35,7 @@ def get_total_flux(path):
   ])
 
 
-def generate_configs(output_dir, ngen=int(1.0e+5), pixDepth=1, pixWidth=1.5, npix=5000):
-  output_dir = osp.abspath(output_dir)
-
+def generate_configs(output_dir, ngen=int(1.0e+5), pixDepth=1, pixWidth=1.5, npix=5000, spectra_path=None):
   hist_dir = get_dir('../data/background_spectra')
   hists = [
     osp.join(hist_dir, item)
@@ -61,6 +59,14 @@ def generate_configs(output_dir, ngen=int(1.0e+5), pixDepth=1, pixWidth=1.5, npi
 
   assert len(hists), 'there is no data for cosmic background spectra!'
 
+  if spectra_path is None:
+    spectra_path = hist_dir
+
+  runtime_hists = [
+    osp.join(spectra_path, osp.basename(hist))
+    for hist in hists
+  ]
+
   configs = dict(
       beamEnergy=-1,
       particle_meta=[
@@ -68,7 +74,7 @@ def generate_configs(output_dir, ngen=int(1.0e+5), pixDepth=1, pixWidth=1.5, npi
           output=osp.join(output_dir, osp.basename(hist)[:-len('.root')]),
           particle=particle_name,
           energyHisto=hist
-        ) for particle_name, hist in zip(particle_names, hists)
+        ) for particle_name, hist in zip(particle_names, runtime_hists)
       ],
       ngen=ngen,
       pixDepth=pixDepth,
@@ -93,30 +99,33 @@ def get_seeds(n, super_seed):
   return numbers
 
 if __name__ == '__main__':
-  import sys
+  import argparse
 
-  def arg(index, default=None):
-    try:
-      return sys.argv[index]
-    except IndexError:
-      if default is None:
-        raise
-      else:
-        return default
+  parser = argparse.ArgumentParser(description='Generate configs for cosmic background simulation.')
+  parser.add_argument('ngen', type=str, help='number of particles to generate')
+  parser.add_argument('-o', '--output', default='./', type=str, help='simulation output directory')
+  parser.add_argument('-d', '--pixDepth', default=1.0, type=float, help='pixel depth')
+  parser.add_argument('-w', '--pixWidth', default=1.5, type=float, help='pixel width')
+  parser.add_argument('-n', '--npix', default=5000, type=float, help='linear size of the sensor')
+  parser.add_argument('-r', '--runtime_spectra_path', default='data/background_spectra/', type=str, help='overrides path to spectra files.')
+  parser.add_argument('-s', '--super_seed', default=12345, type=int, help='seed to generate seeds.')
+
+  args = parser.parse_args()
 
   with open(get_file('../data/config/run.mac.template'), 'r') as _f:
     from string import Template
     config = Template(_f.read())
 
   configs = list(generate_configs(
-    output_dir = arg(0, './'),
-    ngen = arg(1, int(1.0e+3)),
-    pixDepth = arg(2, 1),
-    pixWidth = arg(3, 1.5),
-    npix = arg(4, 5000),
+    output_dir = args.output,
+    ngen = args.ngen,
+    pixDepth = args.pixDepth,
+    pixWidth = args.pixWidth,
+    npix = args.npix,
+    spectra_path=args.runtime_spectra_path
   ))
 
-  super_seed = arg(5, 12345678)
+  super_seed = args.super_seed
 
   for values, (seed1, seed2) in zip(configs, get_seeds(len(configs), super_seed=super_seed)):
     particle = values['particle']
