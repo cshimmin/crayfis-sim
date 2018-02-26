@@ -107,7 +107,7 @@ if __name__ == '__main__':
 
   parser = argparse.ArgumentParser(description='Generate configs for cosmic background simulation.')
   parser.add_argument('ngen', type=str, help='number of particles of each type to shoot')
-  parser.add_argument('-o', '--output', default='./', type=str, help='simulation output directory')
+  parser.add_argument('-o', '--output', default='./events/', type=str, help='simulation output directory')
   parser.add_argument('-d', '--pixDepth', default=1.0, type=float, help='pixel depth')
   parser.add_argument('-w', '--pixWidth', default=1.5, type=float, help='pixel width')
   parser.add_argument('-n', '--npix', default=5000, type=float, help='linear size of the sensor')
@@ -117,6 +117,11 @@ if __name__ == '__main__':
   parser.add_argument('-c', '--configs_output', default='./configs/', type=str, help='output for the generated config files')
 
   args = parser.parse_args()
+
+  try:
+    os.makedirs(args.output)
+  except OSError:
+    pass
 
   with open(get_file('../data/config/run.mac.template'), 'r') as _f:
     from string import Template

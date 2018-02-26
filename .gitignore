@@ -9,3 +9,6 @@ bin/
 
 *__pycache__*
 *.pyc
+
+configs/
+events/
