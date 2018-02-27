@@ -6,3 +6,9 @@ slurm*.out
 bin/
 # ignore vim swapfiles
 .*.swp
+
+*__pycache__*
+*.pyc
+
+configs/
+events/

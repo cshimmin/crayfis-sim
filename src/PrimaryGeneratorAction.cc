@@ -27,7 +27,7 @@
 /// \brief Implementation of the PrimaryGeneratorAction class
 //
 // $Id: PrimaryGeneratorAction.cc 76293 2013-11-08 13:11:23Z gcosmo $
-// 
+//
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -54,15 +54,15 @@ PrimaryGeneratorAction::PrimaryGeneratorAction( DetectorConstruction* det)
 :G4VUserPrimaryGeneratorAction(),
  fParticleGun(0),
  fDetector(det),
- fRndmBeam(0),       
+ fRndmBeam(0),
  fGunMessenger(0),
  fEnergyHistogram(0)
-                                              
+
 {
   fParticleGun  = new G4ParticleGun(1);
   SetDefaultKinematic();
   fRndmBeam = 0.;
-    
+
   //create a messenger for this class
   fGunMessenger = new PrimaryGeneratorMessenger(this);
   fRandomizer = new G4RandGauss(CLHEP::HepRandom::getTheEngine(), 0.0, 0.62);
@@ -73,7 +73,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction( DetectorConstruction* det)
 PrimaryGeneratorAction::~PrimaryGeneratorAction()
 {
   delete fParticleGun;
-  delete fGunMessenger;  
+  delete fGunMessenger;
 
   if (fEnergyHistogram) {
     delete fEnergyHistogram;
@@ -119,16 +119,16 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   //
   //randomize the beam, if requested.
   /*
-  if (fRndmBeam > 0.) 
+  if (fRndmBeam > 0.)
     {
-      G4ThreeVector oldPosition = fParticleGun->GetParticlePosition();    
+      G4ThreeVector oldPosition = fParticleGun->GetParticlePosition();
       G4double rbeam = 0.5*(fDetector->GetSize())*fRndmBeam;
       G4double x0 = oldPosition.x();
       G4double y0 = oldPosition.y() + (2*G4UniformRand()-1.)*rbeam;
       G4double z0 = oldPosition.z() + (2*G4UniformRand()-1.)*rbeam;
       fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
       fParticleGun->GeneratePrimaryVertex(anEvent);
-      fParticleGun->SetParticlePosition(oldPosition);      
+      fParticleGun->SetParticlePosition(oldPosition);
     }
   */
   fParticleGun->SetParticlePosition(G4ThreeVector(0.,0.,-0.5*fDetector->GetDepth()));
@@ -136,7 +136,10 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	  // randomize beam direction
 	  //G4ThreeVector newMomentum(-1.0,0.,0.);
 	  //double newPhi = (2*G4UniformRand()-1.)*3.14159/2.0;
-	  double newTheta = fRandomizer->fire();
+    double newTheta = 3.14159265359;
+    while (newTheta > 3.14159265359 / 4 || newTheta < -3.14159265359 / 4) {
+      newTheta = fRandomizer->fire();
+    }
     double newPhi = (2*G4UniformRand()-1.)*3.14159/2.;
 	  //newMomentum.setTheta(newTheta + 3.14159);
     G4ThreeVector newMomentum;
@@ -158,4 +161,3 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
