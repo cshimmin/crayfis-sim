@@ -5,7 +5,7 @@
 OutputManager* OutputManager::_inst = 0;
 
 OutputManager::OutputManager() :
-	fOutfile(0), fNtuple(0), phi(0.0)
+	fOutfile(0), fNtuple(0), phi(0.0), theta(0.0), energy(0.0)
 {
 }
 
@@ -46,6 +46,7 @@ void OutputManager::initialize() {
 	fNtuple->Branch("pix_n", &pix_n);
 
 	fNtuple->Branch("phi", &phi, "phi/D");
+	fNtuple->Branch("theta", &theta, "theta/D");
 	fNtuple->Branch("energy", &energy, "energy/D");
 	fNtuple->Branch("Edep", &Edep, "Edep/D");
 

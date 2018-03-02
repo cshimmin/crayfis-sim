@@ -133,31 +133,29 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   */
   fParticleGun->SetParticlePosition(G4ThreeVector(0.,0.,-0.5*fDetector->GetDepth()));
   if (fRndmBeam > 0.) {
-	  // randomize beam direction
-	  //G4ThreeVector newMomentum(-1.0,0.,0.);
-	  //double newPhi = (2*G4UniformRand()-1.)*3.14159/2.0;
+    // randomize beam direction
+    double newPhi = (2*G4UniformRand()-1.)*3.14159/2.;
     double newTheta = 3.14159265359;
     while (newTheta > 3.14159265359 / 4 || newTheta < -3.14159265359 / 4) {
       newTheta = fRandomizer->fire();
     }
-    double newPhi = (2*G4UniformRand()-1.)*3.14159/2.;
-	  //newMomentum.setTheta(newTheta + 3.14159);
     G4ThreeVector newMomentum;
     newMomentum.setRThetaPhi(1, newTheta, newPhi);
-	  //OutputManager::Instance()->setPhi(newTheta);
-	  fParticleGun->SetParticleMomentumDirection(newMomentum);
+    fParticleGun->SetParticleMomentumDirection(newMomentum);
+    OutputManager::Instance()->setPhi(newPhi);
+    OutputManager::Instance()->setTheta(newTheta);
   }
 
   if (fEnergyHistogram) {
     double energy = fEnergyHistogram->GetRandom();
     fParticleGun->SetParticleEnergy(energy);
+    OutputManager::Instance()->setEnergy(energy);
   }
 
   fParticleGun->GeneratePrimaryVertex(anEvent);
 
 
   double energy_out = fParticleGun->GetParticleEnergy();
-  OutputManager::Instance()->setEnergy(energy_out);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

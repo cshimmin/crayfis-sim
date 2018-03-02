@@ -25,6 +25,7 @@ public:
 	void addPixel(int x, int y);
 
 	void setPhi(double newPhi) {phi = newPhi;};
+	void setTheta(double newTheta) {theta = newTheta;};
 	void setEnergy(double newEnergy) {energy = newEnergy;};
 	void setEdep(double newEdep) { Edep = newEdep;};
 	double getNGen() { return fCuts->GetBinContent(1); };
@@ -63,6 +64,7 @@ private:
 	int                     pix_n;
 
 	double phi;
+	double theta;
 	double energy;
 	double Edep;
 };
