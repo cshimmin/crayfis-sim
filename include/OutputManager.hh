@@ -47,20 +47,6 @@ private:
 	std::vector<int>        pix_x;
 	std::vector<int>        pix_y;
 	std::vector<double>     pix_val;
-  /*
-	std::vector<double>     pix_n1;
-	std::vector<double>     pix_n2;
-	std::vector<double>     pix_n3;
-	std::vector<double>     pix_n4;
-	std::vector<double>     pix_n5;
-	std::vector<double>     pix_n6;
-	std::vector<double>     pix_n7;
-	std::vector<double>     pix_n8;
-	std::vector<int>    	pix_color;
-	std::vector<double>    	pix_r;
-	std::vector<double>    	pix_g;
-	std::vector<double>    	pix_b;
-  */
 	int                     pix_n;
 
 	double phi;
