@@ -27,11 +27,6 @@
 /control/alias seed2 456
 /random/setSeeds {seed1} {seed2}
 
-# set this to 1 if you want the beam
-# angle to be randomly distributed
-/control/alias doRandom 0
-
-
 
 /control/verbose 2
 /run/verbose 2
@@ -44,22 +39,28 @@
 /testem/det/setDepth {pixDepth} um
 /testem/det/setNPix {npix}
 
+# set this if you want to use cuts different from the default (0.5um)
+#/testem/phys/setCuts 0.5 um
 
 /run/initialize
 
 
 /gun/particle {bParticle}
 /gun/energy {beamEnergy} keV
-/testem/gun/rndm {doRandom}
 
 
 # uncomment the following line if you want the energy
 # to be sampled from a histogram.
-# the file should contain a TH1F named "particleEnergy",
-# with the desired distribution in units of keV.
+# the file should contain a TH1F named "energy",
+# with the desired distribution in units of MeV.
 
-#/testem/gun/energyHisto spectrum.root
+#/testem/gun/energy/hist data/background_spectra/{bParticle}.root
 
+# uncomment the following if you want the angle theta to be sampled
+# from a histogram. When sampling theta, the angle phi will be uniformly
+# distributed. The file should contain a TH1F named "theta" in units of radians.
+
+#/testem/gun/theta/hist data/theta_cos2.root
 
 
 # how often to print progress
