@@ -57,10 +57,16 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
   //G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
    
   G4double EdepStep = aStep->GetTotalEnergyDeposit();
-  if (EdepStep > 0.) {         run->AddEdep(EdepStep);
-                      fEventAction->AddEdep(EdepStep);
+  G4double EdepStepNI = aStep->GetNonIonizingEnergyDeposit();
+  if (EdepStep > 0.) {
+    run->AddEdep(EdepStep);
+    fEventAction->AddEdep(EdepStep);
   }
- const G4VProcess* process = aStep->GetPostStepPoint()->GetProcessDefinedStep();
+  if (EdepStepNI > 0.) {
+    fEventAction->AddEdepNI(EdepStepNI);
+  }
+
+  const G4VProcess* process = aStep->GetPostStepPoint()->GetProcessDefinedStep();
   if (process) run->CountProcesses(process->GetProcessName());
 
   // step length of primary particle
@@ -82,13 +88,11 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
   G4VPhysicalVolume * vol = track->GetVolume();
   //G4cout << "volumn name is" << vol->GetName() << G4endl;
   if (vol->GetName() == "pixelP") {
-	PixelPVPlacement* pix = (PixelPVPlacement*)vol;
-	//G4cout << "Hit (" << pix->idx_x << ", " << pix->idx_y << ")  ::  ";
-	//G4cout << track->GetPosition() << G4endl;
-	fEventAction->AddPixHit(EdepStep, pix->idx_x, pix->idx_y);
+    PixelPVPlacement* pix = (PixelPVPlacement*)vol;
+    //G4cout << "Hit (" << pix->idx_x << ", " << pix->idx_y << ")  ::  ";
+    //G4cout << track->GetPosition() << G4endl;
+    fEventAction->AddPixHit(EdepStep, pix->idx_x, pix->idx_y);
   }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-

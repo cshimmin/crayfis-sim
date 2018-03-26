@@ -12,8 +12,11 @@
 
 EventAction::EventAction()
 :G4UserEventAction(),
+ fTotalEnergyDeposit(0),
+ fNonionizingEnergyDeposit(0),
  fNhits(0),
- fMinPixOut(0.0)
+ fMinPixOut(0.0),
+ fNPixEvent(0)
 {
   fEventMessenger = new EventMessenger(this);
 }
@@ -31,6 +34,7 @@ void EventAction::BeginOfEventAction(const G4Event*)
 {
  OutputManager *outman = OutputManager::Instance();
  fTotalEnergyDeposit = 0.;
+ fNonionizingEnergyDeposit = 0.;
  outman->clearHits();
  outman->resetNtuple();
 
@@ -41,20 +45,20 @@ void EventAction::BeginOfEventAction(const G4Event*)
 
 void EventAction::EndOfEventAction(const G4Event*)
 {
-  if (fTotalEnergyDeposit <= 0) return;
+  //if (fTotalEnergyDeposit <= 0) return;
 
   OutputManager *outman = OutputManager::Instance();
 
-  outman->fillEdep();
+  outman->setEdep(fTotalEnergyDeposit);
+  outman->setEdep_nonionizing(fNonionizingEnergyDeposit);
+  outman->fillEvent();
 
   if (fNPixEvent>0 && fNhits<fNPixEvent) {
 	  return;
   }
 
-  outman->setEdep(fTotalEnergyDeposit);
   outman->writePixels(fMinPixOut);
- 
-  outman->fillNtuple();
+  outman->fillPixels();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

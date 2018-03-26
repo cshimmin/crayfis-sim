@@ -20,14 +20,13 @@ public:
 	void finalize();
 
 	void resetNtuple();
-	void fillNtuple();
-	void fillEdep();
+	void fillPixels();
+	void fillEvent();
 	void addPixel(int x, int y);
 
-	void setPhi(double newPhi) {phi = newPhi;};
-	void setTheta(double newTheta) {theta = newTheta;};
-	void setEnergy(double newEnergy) {energy = newEnergy;};
-	void setEdep(double newEdep) { Edep = newEdep;};
+	void setParticle(G4int pid, G4double energy, G4double theta, G4double phi);
+	void setEdep(double newEdep) { fEdep = newEdep;};
+	void setEdep_nonionizing(double newEdep) { fEdep_nonionizing = newEdep; }
 	double getNGen() { return fCuts->GetBinContent(1); };
 	double getNPass() { return fCuts->GetBinContent(2); };
 
@@ -40,8 +39,8 @@ private:
 	static OutputManager* _inst;
 
 	TFile*                  fOutfile;
-	TTree*                  fNtuple;
-	TTree*                  fEdep;
+	TTree*                  fPixels;
+	TTree*                  fEvent;
 	TH1I*			fCuts;
 
 	std::vector<int>        pix_x;
@@ -49,8 +48,10 @@ private:
 	std::vector<double>     pix_val;
 	int                     pix_n;
 
-	double phi;
-	double theta;
-	double energy;
-	double Edep;
+	int fPid;
+	double fEnergy;
+	double fTheta;
+	double fPhi;
+	double fEdep;
+	double fEdep_nonionizing;
 };

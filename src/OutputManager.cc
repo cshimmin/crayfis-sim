@@ -5,7 +5,9 @@
 OutputManager* OutputManager::_inst = 0;
 
 OutputManager::OutputManager() :
-	fOutfile(0), fNtuple(0), phi(0.0), theta(0.0), energy(0.0)
+	fOutfile(0), fPixels(0),
+  fPid(0), fEnergy(0.0), fTheta(0.0), fPhi(0.0),
+	fEdep(0), fEdep_nonionizing(0)
 {
 }
 
@@ -21,22 +23,30 @@ void OutputManager::initialize() {
 	std::stringstream ss;
 	ss << G4AnalysisManager::Instance()->GetFileName() << ".root";
 	fOutfile = new TFile(ss.str().c_str(), "recreate");
-	fNtuple = new TTree("pixels", "pixels");
-	fEdep = new TTree("fEdep", "fEdep");
+	fPixels = new TTree("pixels", "pixels");
+	fEvent = new TTree("events", "events");
 
 	fCuts = new TH1I("cuts", "cuts", 2, 0, 2);
 
-	fNtuple->Branch("pix_x", &pix_x);
-	fNtuple->Branch("pix_y", &pix_y);
-	fNtuple->Branch("pix_val", &pix_val);
-	fNtuple->Branch("pix_n", &pix_n);
+	fPixels->Branch("pix_x", &pix_x);
+	fPixels->Branch("pix_y", &pix_y);
+	fPixels->Branch("pix_val", &pix_val);
+	fPixels->Branch("pix_n", &pix_n);
 
-	fNtuple->Branch("phi", &phi, "phi/D");
-	fNtuple->Branch("theta", &theta, "theta/D");
-	fNtuple->Branch("energy", &energy, "energy/D");
-	fNtuple->Branch("Edep", &Edep, "Edep/D");
+  fPixels->Branch("pid", &fPid, "pid/I");
+	fPixels->Branch("energy", &fEnergy, "energy/D");
+	fPixels->Branch("phi", &fPhi, "phi/D");
+	fPixels->Branch("theta", &fTheta, "theta/D");
 
-	fEdep->Branch("Edep", &Edep, "Edep/D");
+	fPixels->Branch("Edep", &fEdep, "Edep/D");
+	fPixels->Branch("Edep_nonionizing", &fEdep_nonionizing, "Edep_nonionizing/D");
+
+  fEvent->Branch("pid", &fPid, "pid/I");
+  fEvent->Branch("Eincident", &fEnergy, "Eincident/D");
+  fEvent->Branch("theta", &fTheta, "theta/D");
+  fEvent->Branch("phi", &fPhi, "phi/D");
+	fEvent->Branch("Edep", &fEdep, "Edep/D");
+	fEvent->Branch("Edep_nonionizing", &fEdep_nonionizing, "Edep_nonionizing/D");
 }
 
 void OutputManager::finalize() {
@@ -56,13 +66,14 @@ void OutputManager::resetNtuple() {
 	fCuts->Fill(0);
 }
 
-void OutputManager::fillNtuple() {
+void OutputManager::fillPixels() {
 	pix_n = pix_x.size();
-	fNtuple->Fill();
+	fPixels->Fill();
 	fCuts->Fill(1);
 }
-void OutputManager::fillEdep() {
-	fEdep->Fill();
+
+void OutputManager::fillEvent() {
+	fEvent->Fill();
 }
 
 void OutputManager::addPixel(int x, int y) {
@@ -71,6 +82,13 @@ void OutputManager::addPixel(int x, int y) {
 	pix_val.push_back(pix_hits[x][y]);
 
 	G4double val = pix_hits[x][y];
+}
+
+void OutputManager::setParticle(G4int pid, G4double energy, G4double theta, G4double phi) {
+  fPid = pid;
+  fEnergy = energy;
+  fTheta = theta;
+  fPhi = phi;
 }
 
 void OutputManager::writePixels(G4double threshold) {
@@ -84,10 +102,10 @@ void OutputManager::writePixels(G4double threshold) {
 }
 
 void OutputManager::clearHits() {
- for (int i = 0; i < MAX_PIX; ++i) {
- for (int j = 0; j < MAX_PIX; ++j) {
-    pix_hits[i][j] = 0;
- }
- }
+  for (int i = 0; i < MAX_PIX; ++i) {
+    for (int j = 0; j < MAX_PIX; ++j) {
+      pix_hits[i][j] = 0;
+    }
+  }
 }
 

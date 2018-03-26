@@ -44,6 +44,7 @@
 #include "G4EmStandardPhysics_option4.hh"
 #include "G4EmLivermorePhysics.hh"
 #include "G4EmPenelopePhysics.hh"
+#include "G4EmLowEPPhysics.hh"
 
 #include "DetectorConstruction.hh"
 
@@ -64,7 +65,7 @@ PhysicsList::PhysicsList(DetectorConstruction* p)
   G4LossTableManager::Instance();
   fDet = p;
   
-  fCurrentDefaultCut   = 1.0*mm;
+  fCurrentDefaultCut   = 0.5*um;
   fCutForGamma         = fCurrentDefaultCut;
   fCutForElectron      = fCurrentDefaultCut;
   fCutForPositron      = fCurrentDefaultCut;
@@ -225,7 +226,7 @@ void PhysicsList::ConstructProcess()
 
 void PhysicsList::AddPhysicsList(const G4String& name)
 {
-  if (verboseLevel>1) {
+  if (verboseLevel>0) {
     G4cout << "PhysicsList::AddPhysicsList: <" << name << ">" << G4endl;
   }
   
@@ -283,6 +284,11 @@ void PhysicsList::AddPhysicsList(const G4String& name)
     delete fEmPhysicsList;
     fEmPhysicsList = new G4EmPenelopePhysics();
             
+  } else if (name == "emlowenergy") {
+    fEmName = name;
+    delete fEmPhysicsList;
+    fEmPhysicsList = new G4EmLowEPPhysics();
+
   } else {
 
     G4cout << "PhysicsList::AddPhysicsList: <" << name << ">"
