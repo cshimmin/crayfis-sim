@@ -34,6 +34,7 @@ void EventAction::BeginOfEventAction(const G4Event*)
 {
  OutputManager *outman = OutputManager::Instance();
  fTotalEnergyDeposit = 0.;
+ fTotalEnergyDepositFront = 0.;
  fNonionizingEnergyDeposit = 0.;
  outman->clearHits();
  outman->resetNtuple();
@@ -50,6 +51,7 @@ void EventAction::EndOfEventAction(const G4Event*)
   OutputManager *outman = OutputManager::Instance();
 
   outman->setEdep(fTotalEnergyDeposit);
+  outman->setEdep_front(fTotalEnergyDepositFront);
   outman->setEdep_nonionizing(fNonionizingEnergyDeposit);
   outman->fillEvent();
 

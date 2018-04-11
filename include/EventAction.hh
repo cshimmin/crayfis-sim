@@ -57,6 +57,7 @@ class EventAction : public G4UserEventAction
     virtual void   EndOfEventAction(const G4Event*);
     
     void AddEdep(G4double Edep)    {fTotalEnergyDeposit += Edep;};
+    void AddEdepFront(G4double Edep)    {fTotalEnergyDepositFront += Edep;};
     void AddEdepNI(G4double Edep)    {fNonionizingEnergyDeposit += Edep;};
     G4double GetEnergyDeposit()    {return fTotalEnergyDeposit;};
     G4double GetEnergyDepositNI()    {return fTotalEnergyDeposit;};
@@ -67,7 +68,8 @@ class EventAction : public G4UserEventAction
     void SetNPixEvent(G4int newval) { fNPixEvent = newval; };
     
   private:
-    G4double fTotalEnergyDeposit;   
+    G4double fTotalEnergyDeposit;
+    G4double fTotalEnergyDepositFront;
     G4double fNonionizingEnergyDeposit;
 
     int fNhits;

@@ -60,10 +60,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
   G4double EdepStepNI = aStep->GetNonIonizingEnergyDeposit();
   if (EdepStep > 0.) {
     run->AddEdep(EdepStep);
-    fEventAction->AddEdep(EdepStep);
-  }
-  if (EdepStepNI > 0.) {
-    fEventAction->AddEdepNI(EdepStepNI);
   }
 
   const G4VProcess* process = aStep->GetPostStepPoint()->GetProcessDefinedStep();
@@ -92,7 +88,18 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     //G4cout << "Hit (" << pix->idx_x << ", " << pix->idx_y << ")  ::  ";
     //G4cout << track->GetPosition() << G4endl;
     fEventAction->AddPixHit(EdepStep, pix->idx_x, pix->idx_y);
+
+    if (EdepStep > 0.) {
+      fEventAction->AddEdep(EdepStep);
+    }
+    if (EdepStepNI > 0.) {
+      fEventAction->AddEdepNI(EdepStepNI);
+    }
   }
+  else if (vol->GetName() == "front_box") {
+    fEventAction->AddEdepFront(EdepStep);
+  }
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

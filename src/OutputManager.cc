@@ -7,7 +7,7 @@ OutputManager* OutputManager::_inst = 0;
 OutputManager::OutputManager() :
 	fOutfile(0), fPixels(0),
   fPid(0), fEnergy(0.0), fTheta(0.0), fPhi(0.0),
-	fEdep(0), fEdep_nonionizing(0)
+	fEdep(0), fEdep_front(0), fEdep_nonionizing(0)
 {
 }
 
@@ -39,6 +39,7 @@ void OutputManager::initialize() {
 	fPixels->Branch("theta", &fTheta, "theta/D");
 
 	fPixels->Branch("Edep", &fEdep, "Edep/D");
+	fPixels->Branch("Edep_front", &fEdep_front, "Edep_front/D");
 	fPixels->Branch("Edep_nonionizing", &fEdep_nonionizing, "Edep_nonionizing/D");
 
   fEvent->Branch("pid", &fPid, "pid/I");
@@ -46,6 +47,7 @@ void OutputManager::initialize() {
   fEvent->Branch("theta", &fTheta, "theta/D");
   fEvent->Branch("phi", &fPhi, "phi/D");
 	fEvent->Branch("Edep", &fEdep, "Edep/D");
+	fEvent->Branch("Edep_front", &fEdep_front, "Edep_front/D");
 	fEvent->Branch("Edep_nonionizing", &fEdep_nonionizing, "Edep_nonionizing/D");
 }
 

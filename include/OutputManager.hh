@@ -26,6 +26,7 @@ public:
 
 	void setParticle(G4int pid, G4double energy, G4double theta, G4double phi);
 	void setEdep(double newEdep) { fEdep = newEdep;};
+	void setEdep_front(double newEdep) { fEdep_front = newEdep;};
 	void setEdep_nonionizing(double newEdep) { fEdep_nonionizing = newEdep; }
 	double getNGen() { return fCuts->GetBinContent(1); };
 	double getNPass() { return fCuts->GetBinContent(2); };
@@ -53,5 +54,6 @@ private:
 	double fTheta;
 	double fPhi;
 	double fEdep;
+	double fEdep_front;
 	double fEdep_nonionizing;
 };
